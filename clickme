@@ -50,4 +50,5 @@ win.add(fixed);
 
 win.show_all();
 button2.hide();
+win.set_focus(null);
 Gtk.main();
