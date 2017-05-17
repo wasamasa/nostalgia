@@ -1,0 +1,77 @@
+#!/usr/bin/gjs
+// -*- mode: js; -*-
+// boredom killer
+
+const Gtk = imports.gi.Gtk;
+
+Gtk.init(null);
+
+function randomizeWindowPosition(window) {
+    let screen = window.get_screen();
+    let monitor = screen.get_monitor_at_window(screen.get_active_window());
+    let geometry = screen.get_monitor_geometry(monitor);
+    let [windowWidth, windowHeight] = window.get_size();
+    let x = Math.floor(Math.random() * (geometry.width - windowWidth));
+    let y = Math.floor(Math.random() * (geometry.height - windowHeight));
+
+    window.move(x, y);
+}
+
+function getUserInput(prompt) {
+    let dialog = new Gtk.MessageDialog({
+        buttons: Gtk.ButtonsType.OK_CANCEL,
+        message_type: Gtk.MessageType.QUESTION,
+        text: prompt
+    });
+
+    let box = dialog.get_content_area();
+    let entry = new Gtk.Entry();
+    entry.set_activates_default(true);
+    box.pack_end(entry, false, false, 0);
+    dialog.show_all();
+    let okButton = dialog.get_widget_for_response(Gtk.ResponseType.OK);
+    okButton.set_can_default(true);
+    okButton.grab_default();
+
+    if (dialog.run() === Gtk.ResponseType.OK) {
+        dialog.hide();
+        let result = parseInt(entry.get_text(), 10);
+        return Number.isInteger(result) && result;
+    } else {
+        return null;
+    }
+}
+
+let count;
+
+function spawnMessageDialog() {
+    let dialog = new Gtk.MessageDialog({
+        buttons: Gtk.ButtonsType.OK,
+        text: 'Having fun yet?'
+    });
+
+    dialog.connect('response', function() {
+        dialog.hide();
+        count--;
+        if (count === 0) {
+            Gtk.main_quit();
+        }
+    });
+
+    randomizeWindowPosition(dialog);
+    dialog.present();
+}
+
+let done = false;
+while (!done) {
+    count = getUserInput('Please enter a fun factor between 1 and 100');
+    if (Number.isInteger(count) && count >= 1 && count <= 100) {
+        done = true;
+    }
+}
+
+for (let i = 0; i < count; ++i) {
+    spawnMessageDialog();
+}
+
+Gtk.main();

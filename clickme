@@ -1,0 +1,53 @@
+#!/usr/bin/gjs
+// -*- mode: js; -*-
+// catch the button!
+
+const Gtk = imports.gi.Gtk;
+
+function congratulateUser() {
+    let dialog = new Gtk.MessageDialog({
+        buttons: Gtk.ButtonsType.OK,
+        text: "Congratulations, you've clicked the button!"
+    });
+    dialog.run();
+    dialog.hide();
+}
+
+Gtk.init(null);
+
+let win = new Gtk.Window();
+win.set_default_size(320, 240);
+win.connect('delete-event', Gtk.main_quit);
+
+let fixed = new Gtk.Fixed();
+
+let button1 = new Gtk.Button({
+    label: 'Click me!'
+});
+
+let button2 = new Gtk.Button({
+    label: 'No, me!'
+});
+
+button1.connect('enter-notify-event', function() {
+    button1.hide();
+    button2.show();
+});
+
+button2.connect('enter-notify-event', function() {
+    button1.set_label('No, me!');
+    button2.hide();
+    button1.show();
+});
+
+button1.connect('clicked', congratulateUser);
+button2.connect('clicked', congratulateUser);
+
+fixed.put(button1, 40, 160);
+fixed.put(button2, 200, 160);
+
+win.add(fixed);
+
+win.show_all();
+button2.hide();
+Gtk.main();

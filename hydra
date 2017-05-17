@@ -1,0 +1,38 @@
+#!/usr/bin/gjs
+// -*- mode: js; -*-
+// port of http://www.windows93.net/#!hydra
+
+const Gtk = imports.gi.Gtk;
+
+Gtk.init(null);
+
+function randomizeWindowPosition(window) {
+    let screen = window.get_screen();
+    let monitor = screen.get_monitor_at_window(screen.get_active_window());
+    let geometry = screen.get_monitor_geometry(monitor);
+    let [windowWidth, windowHeight] = window.get_size();
+    let x = Math.floor(Math.random() * (geometry.width - windowWidth));
+    let y = Math.floor(Math.random() * (geometry.height - windowHeight));
+
+    window.move(x, y);
+}
+
+function hydra() {
+    let dialog = new Gtk.MessageDialog({
+        buttons: Gtk.ButtonsType.OK,
+        text: 'Cut off a head, two more will take its place.\n[ Hydra ViRuS BioCoded by Typhon/Échidna ]'
+    });
+
+    dialog.connect('response', function() {
+        dialog.hide();
+        hydra();
+        hydra();
+    });
+
+    randomizeWindowPosition(dialog);
+    dialog.present();
+}
+
+hydra();
+
+Gtk.main();
