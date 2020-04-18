@@ -1,5 +1,4 @@
 #!/usr/bin/env gjs
-// -*- mode: js; -*-
 // port of https://www.youtube.com/watch?v=FMIZEfjYmtM
 
 const {GLib, Gio} = imports.gi;
